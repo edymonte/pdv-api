@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.rulers": [120],
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true
+  },
+  "github.copilot.chat.agent.runTasks": true,
+  "github.copilot.nextEditSuggestions.enabled": true
+}

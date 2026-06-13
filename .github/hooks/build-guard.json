@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[Boa Vista CI] Hook de build ativo. Se os testes falharem após uma alteração, o agente será notificado automaticamente para corrigir.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[Boa Vista CI] Hook de build ativo. Se os testes falharem após uma alteração, o agente será notificado automaticamente para corrigir.\"}'"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/scripts/build-guard.sh",
+        "powershell": "pwsh -File .github/hooks/scripts/build-guard.ps1"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[Boa Vista CI] Sessão encerrada. Verifique se dotnet test está passando antes do próximo commit.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[Boa Vista CI] Sessão encerrada. Verifique se dotnet test está passando antes do próximo commit.\"}'"
+      }
+    ]
+  }
+}

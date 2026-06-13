@@ -1,0 +1,22 @@
+## Dependências .NET
+obj/
+bin/
+*.user
+.vs/
+
+## Banco SQLite gerado
+db/catalogo-produtos.db
+
+## Logs de hooks
+.github/hooks/logs/
+
+## VS Code (manter .vscode/ rastreado exceto configurações pessoais)
+.vscode/*.log
+
+## Evidências geradas (cada turma gera a sua na branch)
+evidencias/turma-*.html
+evidencias/index.html
+
+## OS
+.DS_Store
+Thumbs.db

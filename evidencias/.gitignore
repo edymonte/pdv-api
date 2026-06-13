@@ -1,0 +1,4 @@
+# evidencias geradas pelo setup/gerar_evidencia.py
+# padrão: turma-{dev|qa|suporte}-{nome-participante}.html
+turma-*.html
+index.html

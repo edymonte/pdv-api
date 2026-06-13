@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "sqlite-catalogo": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "${workspaceFolder}/db/catalogo-produtos.db"
+      ],
+      "description": "Catálogo de produtos da Farmácia Boa Vista (SQLite). Usado no Bloco 3 para validar produtos antes de devolver estoque."
+    }
+  }
+}
