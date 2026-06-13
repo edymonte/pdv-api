@@ -80,7 +80,13 @@ cp governanca/.github/instructions/validacao.instructions.md .github/instruction
 - `validacao.instructions.md` — FluentValidation, mensagens em pt-BR
 
 > 💡 **Por que importa:** sem isso, dois devs do time recebem sugestões diferentes do Copilot para o mesmo problema. Com isso, o Copilot conhece os padrões do time desde o primeiro acesso.
+**Instructions vs. Skills — quando usar cada um:**
 
+| | Instructions | Skills |
+|---|---|---|
+| **Quando ativa** | Sempre — em todo chat do repo | Sob demanda — quando o contexto é relevante |
+| **O que define** | Regras que sempre se aplicam (stack, segurança, nomenclatura) | Procedimentos específicos (como gerar testes, como escalar incidente) |
+| **Exemplo** | “Nunca usar `FromSqlRaw` com interpolação” | “Ao gerar testes, use o template xUnit com AAA e `Should_X_When_Y`” |
 **✅ Valide:** abra um novo chat no Copilot e pergunte _"Qual é o padrão de nomenclatura de testes do time?"_ — ele deve responder com `Should_X_When_Y`.
 
 ---
@@ -96,7 +102,16 @@ mkdir -p .github/skills/gerar-testes-pdv
 cp governanca/.github/skills/gerar-testes-pdv/SKILL.md .github/skills/gerar-testes-pdv/
 ```
 
-**Leia o `SKILL.md`:** note o campo `description` — é ele que determina quando a skill é ativada.
+**Leia o `SKILL.md`:** o arquivo tem uma estrutura específica que o Copilot interpreta:
+
+```markdown
+# Skill: Gerar Testes PDV
+## Quando usar: testes, xunit, cobertura, Should_, AAA
+## Template
+...
+```
+
+Os campos `# Skill:` e `## Quando usar:` são o que determina **quando** a skill é injetada. O Copilot lê o `description` e decide se o contexto da pergunta é relevante para ativá-la.
 
 > 💡 **Por que importa:** skills empacotam o "como fazer" do time. Um dev novo recebe automaticamente o template correto de testes xUnit ao pedir para o Copilot gerar testes.
 
@@ -113,7 +128,26 @@ mkdir -p .github/agents
 cp governanca/.github/agents/qa-boa-vista.agent.md .github/agents/
 ```
 
-**Leia o arquivo:** note os campos `tools:` (ferramentas que o agente pode usar) e como ele classifica issues.
+**Leia o arquivo:** veja a estrutura que todo agente deve ter:
+
+```yaml
+---
+description: >  # o que o agente faz e quando invocar
+tools:          # ferramentas que ele pode usar
+  - read_file
+  - grep
+  - list_directory
+---
+# Nome do Agente
+Você é ...
+## O que verificar
+...
+## Formato de resposta
+## [Nome do arquivo ou feature]
+### 🔴 Bloqueante | 🟡 Atenção | 🟢 Sugestão
+```
+
+O formato de classificação 🔴/🟡/🟢 é definido dentro do arquivo do agente — você controla os critérios de aceite da empresa.
 
 > 💡 **Por que importa:** diferente das instructions (que orientam quem *gera*), o agent `@qa-boa-vista` é um *revisor* — você o chama para avaliar código já gerado. É o QA automatizado do time.
 
@@ -151,6 +185,8 @@ print('Banco criado!')
 
 > 💡 **Por que importa:** o agente não está limitado ao que existe no repositório. Com o `fetch`, ele pode ler documentação técnica externa, regulatórios, APIs públicas — e usar o conteúdo diretamente no código que está escrevendo.
 
+**Isolamento por repositório:** o `mcp.json` fica dentro do `.vscode/` de cada repo. O Time Dev acessa o banco de produtos; o Time QA acessa issues; o Suporte N2 acessa logs de incidentes. **Sem vazamento de contexto entre times.**
+
 **✅ Valide — dois experimentos:**
 
 1. Bloco 3 (SQLite): no Agent Mode, pergunte _"Quais produtos estão inativos no catálogo?"_
@@ -171,7 +207,17 @@ cp governanca/.github/hooks/scripts/build-guard.ps1 .github/hooks/scripts/
 cp governanca/.github/hooks/scripts/build-guard.sh .github/hooks/scripts/
 ```
 
-**Leia `build-guard.json`:** note o evento `postToolUse` — ele dispara **depois** que o agente edita um arquivo. Se arquivos `.cs` foram modificados, roda `dotnet test`. Se falhar, injeta a mensagem de erro de volta para o agente se corrigir.
+**Leia `build-guard.json`:** note o evento `postToolUse`. Hooks são o único primitivo com eventos — cada um tem uma finalidade diferente:
+
+| Evento | Quando dispara | O que pode fazer |
+|---|---|---|
+| `sessionStart` | Início de cada sessão do agente | Log de início, aviso de políticas ativas |
+| `preToolUse` ⭐ | **Antes** de o agente executar qualquer ferramenta | Único que pode **BLOQUEAR** a ação antes de acontecer |
+| `postToolUse` | Após o agente executar uma ferramenta | Validar resultado, notificar, disparar testes |
+| `userPromptSubmitted` | Quando o usuário envia um prompt | Filtrar dados sensíveis (CPF, senha) antes de processar |
+| `errorOccurred` | Quando ocorre um erro | Alerta automático + sugestão de rollback |
+
+> ⚠️ `preToolUse` é o único evento que pode BLOQUEAR uma ação antes de acontecer. O nosso `build-guard.json` usa `postToolUse` (mais comum) — em produção, um `preToolUse` poderia impedir que o agente deletasse arquivos em `/prod/` sem PR aprovado.
 
 > 💡 **Por que importa:** é a diferença entre "agente que faz e pronto" e "agente que faz, verifica e conserta". Em produção, o Copilot não vai commitar código quebrado.
 
@@ -184,6 +230,15 @@ cp governanca/.github/hooks/scripts/build-guard.sh .github/hooks/scripts/
 **O que é:** documentação versionada no repositório que o Copilot consulta e **aplica diretamente no código**. Regras de negócio, ADRs, runbooks — o agente encontra a resposta na wiki antes de escrever uma linha.
 
 A diferença para as instructions: instructions são regras técnicas (sempre ativas). A Knowledge Base é o **domínio do negócio** — o agente a consulta quando precisa saber o que a empresa exige, não apenas como o código deve ser escrito.
+
+**Skills vs. Knowledge Base — a distinção do slide:**
+
+| | Skills | Knowledge Base |
+|---|---|---|
+| **Escopo** | Procedimento específico e pontual | Índice amplo de toda a documentação |
+| **Ativação** | Injetada on-demand quando relevante | Pesquisada semanticamente em background |
+| **Exemplo** | “Ao gerar testes, use este template” | “Qual é o limite de desconto? → busca em regras-de-negocio.md” |
+| **Artefato** | `SKILL.md` em `.github/skills/` | `docs/wiki/*.md` (ou repos indexados no Enterprise) |
 
 > 📎 Em produção, o GitHub Copilot Enterprise indexa documentação de vários repositórios, PDFs e wikis externas semanticamente. Aqui simulamos o mesmo conceito com `docs/wiki/` versionado no próprio repo.
 
@@ -229,6 +284,15 @@ O agente vai:
 
 **O que é:** o Copilot como agente autônomo no GitHub.com. Você atribui uma issue ao Copilot; ele lê as instructions, explora o codebase, escreve código, roda os testes e **abre o PR automaticamente** — sem intervenção humana até a revisão.
 
+**O fluxo completo em 4 etapas:**
+
+| Etapa | O que acontece |
+|---|---|
+| **1 → Atribuir issue** | Você cria a issue no GitHub e atribui ao Copilot |
+| **2 → Copilot planeja** | Lê `AGENTS.md`, instructions e explora o codebase para definir a abordagem |
+| **3 → Codifica + testa** | Escreve o código, itera nos erros, roda os testes automaticamente |
+| **4 → Abre o PR** | Draft PR com código, testes e scan de segurança. Marca dev para revisão |
+
 **Pré-requisito:** `AGENTS.md` na raiz do repositório instrui o Coding Agent sobre as regras do time. Leia-o agora.
 
 **Leia também `.github/workflows/ci.yml`:** o Coding Agent sabe que há CI rodando `dotnet test` a cada push e não pode quebrar a build.
@@ -256,18 +320,34 @@ O agente vai:
 
 ### Pilar 8 — CLI 💻
 
-**O que é:** GitHub Copilot no terminal. Para quem vive no bash/PowerShell — sem precisar abrir o VS Code.
+**O que é:** GitHub Copilot no terminal — dois modos:
+
+| Modo | Comando | Instalação | Quando usar |
+|---|---|---|---|
+| **gh copilot** | `gh copilot suggest` / `explain` | Via GitHub CLI (já instalado) | Comandos git e shell rápidos |
+| **copilot CLI** | `copilot` | `npm install -g @github/copilot` | Agente completo no terminal — edita arquivos, roda testes, delega tarefas |
 
 **Faça:**
 
 ```bash
-# Verifica se gh está instalado (o setup.bat já fez isso)
-gh --version
-
-# Testa o Copilot CLI
+# gh copilot (já instalado via setup.bat)
 gh copilot suggest "como ver todos os arquivos modificados no último commit"
 gh copilot explain "git rebase -i HEAD~3"
+
+# copilot CLI (agente completo no terminal)
+npm install -g @github/copilot   # instala uma vez
+copilot                           # inicia sessão interativa
 ```
+
+Dentro da sessão `copilot`:
+```
+> Revise todos os endpoints em src/ buscando SQL Injection
+> &Crie testes para o módulo de estoque enquanto continuo trabalhando
+> /model                          # lista modelos disponíveis
+> /resume                         # retoma sessão delegada com &
+```
+
+O prefixo `&` delega a tarefa em background — o agente trabalha enquanto você continua no terminal.
 
 > 💡 **Por que importa:** onboarding de devs que ainda não conhecem os comandos git avançados. E para automações — você pode usar `gh copilot suggest` em scripts de CI.
 
@@ -284,7 +364,7 @@ Agora que todos os pilares estão configurados, execute os blocos do workshop us
 | **Bloco 3** | prompt `bloco3-mcp-catalogo` + `bloco3b-mcp-fetch` | MCP — banco local + URL externa |
 | **Bloco 4** | prompt `bloco4-adicionar-status` | Hook de autocorreção |
 | **Bloco 5** | `@qa-boa-vista` no chat | Custom Agent revisor |
-| **Bloco 6** | prompt `bloco6-descricao-pr` | Knowledge Base — prompt compartilhado |
+| **Bloco 6** | prompt `bloco6-knowledge-base` | Knowledge Base — wiki → código |
 | **Bloco 7** | Atribuir issue ao Copilot em github.com | Coding Agent — Issue → PR automático |
 | **Bloco 8** | `gh copilot suggest` / `copilot` CLI | CLI |
 
