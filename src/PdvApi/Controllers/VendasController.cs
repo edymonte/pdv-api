@@ -40,6 +40,9 @@ public class VendasController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] Venda venda)
     {
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         var criada = await _vendaService.CriarVendaAsync(venda);
         return CreatedAtAction(nameof(ObterPorId), new { id = criada.Id }, criada);
     }
