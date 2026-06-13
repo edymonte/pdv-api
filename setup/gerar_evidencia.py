@@ -242,10 +242,10 @@ PILARES = [
                 "comando": ["gh", "--version"],
             },
             {
-                "desc": "Extensão gh copilot instalada",
+                "desc": "gh copilot disponível (built-in ou extensão)",
                 "tipo": "presenca_saida_comando",
-                "comando": ["gh", "extension", "list"],
-                "pattern": r"copilot",
+                "comando": ["gh", "help", "copilot"],
+                "pattern": r"Copilot|copilot",
             },
         ],
     },
@@ -275,7 +275,8 @@ def _presenca_texto(arquivo: str, pattern: str) -> tuple[bool, str]:
 
 def _comando_disponivel(comando: list[str]) -> tuple[bool, str]:
     try:
-        r = subprocess.run(comando, capture_output=True, text=True, timeout=8)
+        r = subprocess.run(comando, capture_output=True, text=True, timeout=8,
+                           stdin=subprocess.DEVNULL)
         if r.returncode == 0:
             versao = (r.stdout + r.stderr).strip().splitlines()[0]
             return True, versao[:80]
@@ -288,15 +289,17 @@ def _comando_disponivel(comando: list[str]) -> tuple[bool, str]:
 
 def _presenca_saida_comando(comando: list[str], pattern: str) -> tuple[bool, str]:
     try:
-        r = subprocess.run(comando, capture_output=True, text=True, timeout=8)
+        r = subprocess.run(comando, capture_output=True, text=True, timeout=8,
+                           stdin=subprocess.DEVNULL)
         saida = r.stdout + r.stderr
         if re.search(pattern, saida, re.IGNORECASE):
-            return True, "encontrado na saída do comando"
-        return False, "extensão não encontrada (execute: gh extension install github/gh-copilot)"
+            linha = saida.strip().splitlines()[0][:80] if saida.strip() else "ok"
+            return True, linha
+        return False, f"comando executou mas saída não corresponde ao esperado"
     except FileNotFoundError:
         return False, f"'{comando[0]}' não encontrado no PATH"
     except subprocess.TimeoutExpired:
-        return False, "timeout ao executar comando"
+        return False, "timeout (execute: gh copilot --version para verificar)"
 
 
 def executar_check(check: dict) -> dict:
