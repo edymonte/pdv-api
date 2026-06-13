@@ -57,6 +57,17 @@ Volta para o estado sem governança, recria o banco SQLite e verifica os testes.
 |---|---|---|
 | `.github/hooks/build-guard.json` | `postToolUse` | Roda `dotnet test` após alterações `.cs`; se falhar, notifica o agente |
 
+### Knowledge Base — wiki consultada pelo agente
+
+| Arquivo | Conteúdo |
+|---|---|
+| `docs/wiki/regras-de-negocio.md` | Regras de cancelamento, desconto, estoque, fluxo de status |
+| `docs/wiki/regulatorio-anvisa.md` | LGPD, medicamentos controlados, NF-e |
+| `docs/wiki/arquitetura-decisoes.md` | ADRs — padrões de código, testes, commits |
+
+Demo: `@workspace Qual é o limite de desconto sem aprovação gerencial?` — Copilot encontra em `docs/wiki/`.  
+Prompt: `.github/prompts/bloco6-knowledge-base.prompt.md` — agente lê a wiki e implementa a validação.
+
 ### MCP — ferramentas externas no Agent Mode
 
 | Servidor | O que acessa | Como testar |
@@ -75,7 +86,7 @@ Volta para o estado sem governança, recria o banco SQLite e verifica os testes.
 | 3 | MCP catálogo de produtos | `.github/prompts/bloco3-mcp-catalogo.prompt.md` | 15min |
 | 4 ⭐ | Autocorreção via hook | `.github/prompts/bloco4-adicionar-status.prompt.md` | 30min |
 | 5 | `@qa-boa-vista` revisa | prompt inline: `@qa-boa-vista revise as alterações feitas até agora` | 15min |
-| 6 | Knowledge Base — prompt compartilhado | `.github/prompts/bloco6-descricao-pr.prompt.md` (gera descrição do PR) | 10min |
+| 6 ⭐ | Knowledge Base — wiki → código | `.github/prompts/bloco6-knowledge-base.prompt.md` | 15min |
 | 7 ⭐ | Coding Agent — Issue → PR no GitHub.com | Atribuir issue ao Copilot em github.com/edymonte/pdv-api/issues | 15min |
 | 8 | CLI + Encerramento | `gh copilot suggest` / `copilot` CLI · Comparar `demo/sem-padrao` vs PR final | 15min |
 
