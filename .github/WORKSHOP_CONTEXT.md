@@ -73,6 +73,7 @@ Prompt: `.github/prompts/bloco6-knowledge-base.prompt.md` — agente lê a wiki 
 | Servidor | O que acessa | Como testar |
 |---|---|---|
 | `sqlite-catalogo` | `db/catalogo-produtos.db` | "liste todos os produtos do catálogo" |
+| `fetch` | Qualquer URL pública em tempo real | `bloco3b-mcp-fetch.prompt.md` — busca ANVISA/CMED |
 
 ---
 
@@ -83,7 +84,7 @@ Prompt: `.github/prompts/bloco6-knowledge-base.prompt.md` — agente lê a wiki 
 | 0 | Abertura — contexto e objetivo | — | 10min |
 | 1 | Agente sem regras | `.github/prompts/bloco1-sem-padrao.prompt.md` | 20min |
 | 2 | Com instructions + skill | `.github/prompts/bloco2-com-instructions.prompt.md` | 25min |
-| 3 | MCP catálogo de produtos | `.github/prompts/bloco3-mcp-catalogo.prompt.md` | 15min |
+| 3 | MCP — catálogo SQLite + fetch externo | `bloco3-mcp-catalogo.prompt.md` / `bloco3b-mcp-fetch.prompt.md` | 15min |
 | 4 ⭐ | Autocorreção via hook | `.github/prompts/bloco4-adicionar-status.prompt.md` | 30min |
 | 5 | `@qa-boa-vista` revisa | prompt inline: `@qa-boa-vista revise as alterações feitas até agora` | 15min |
 | 6 ⭐ | Knowledge Base — wiki → código | `.github/prompts/bloco6-knowledge-base.prompt.md` | 15min |

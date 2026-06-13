@@ -142,11 +142,19 @@ print('Banco criado!')
 "
 ```
 
-**Leia `.vscode/mcp.json`:** veja como o servidor MCP sqlite é configurado em 3 linhas.
+**Leia `.vscode/mcp.json`:** o arquivo tem dois servidores configurados:
 
-> 💡 **Por que importa:** o agente pode consultar o catálogo de produtos real durante a geração de código — sem você precisar descrever quais produtos existem. Experimente no Bloco 3.
+| Servidor | O que faz |
+|---|---|
+| `sqlite-catalogo` | Consulta o banco local de produtos (SQLite) |
+| `fetch` | Busca qualquer URL pública em tempo real |
 
-**✅ Valide:** no VS Code, vá em `Copilot Chat → Agent Mode` e pergunte _"Quais produtos estão inativos no catálogo?"_
+> 💡 **Por que importa:** o agente não está limitado ao que existe no repositório. Com o `fetch`, ele pode ler documentação técnica externa, regulatórios, APIs públicas — e usar o conteúdo diretamente no código que está escrevendo.
+
+**✅ Valide — dois experimentos:**
+
+1. Bloco 3 (SQLite): no Agent Mode, pergunte _"Quais produtos estão inativos no catálogo?"_
+2. Bloco 3b (fetch): execute o prompt `bloco3b-mcp-fetch.prompt.md` — o agente vai buscar a página da ANVISA/CMED e usar o conteúdo para documentar o código
 
 ---
 
@@ -273,7 +281,7 @@ Agora que todos os pilares estão configurados, execute os blocos do workshop us
 |-------|---------------|------------------|
 | **Bloco 1** | prompt `bloco1-sem-padrao` (na raiz) | Agente sem governança |
 | **Bloco 2** | prompt `bloco2-com-instructions` | Instructions + Skills |
-| **Bloco 3** | prompt `bloco3-mcp-catalogo` | MCP — consulta ao banco |
+| **Bloco 3** | prompt `bloco3-mcp-catalogo` + `bloco3b-mcp-fetch` | MCP — banco local + URL externa |
 | **Bloco 4** | prompt `bloco4-adicionar-status` | Hook de autocorreção |
 | **Bloco 5** | `@qa-boa-vista` no chat | Custom Agent revisor |
 | **Bloco 6** | prompt `bloco6-descricao-pr` | Knowledge Base — prompt compartilhado |
