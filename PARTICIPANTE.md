@@ -194,15 +194,30 @@ cp governanca/.github/prompts/bloco6-descricao-pr.prompt.md .github/prompts/
 
 ### Pilar 7 — Coding Agent ⚙️
 
-**O que é:** o arquivo `AGENTS.md` instrui o Coding Agent (usado em CI/CD e automações) sobre as regras do repositório. Diferente das instructions do Copilot no VS Code, este arquivo é lido pelo agente autônomo que opera sem supervisão humana.
+**O que é:** o Copilot como agente autônomo no GitHub.com. Você atribui uma issue ao Copilot; ele lê as instructions, explora o codebase, escreve código, roda os testes e **abre o PR automaticamente** — sem intervenção humana até a revisão.
 
-**O `AGENTS.md` já existe na raiz do repositório.** Leia-o agora.
+**Pré-requisito:** `AGENTS.md` na raiz do repositório instrui o Coding Agent sobre as regras do time. Leia-o agora.
 
-**Leia também `.github/workflows/ci.yml`:** o workflow CI roda `dotnet test` a cada push. O Coding Agent sabe disso e não pode commitar código que quebre o build.
+**Leia também `.github/workflows/ci.yml`:** o Coding Agent sabe que há CI rodando `dotnet test` a cada push e não pode quebrar a build.
 
-> 💡 **Por que importa:** quando o agente opera de forma autônoma (em pipelines, em PRs automáticos), o `AGENTS.md` é o contrato entre o time e o agente. Sem ele, o agente age sem restrições.
+**Faça — demo do Issue → PR automático:**
 
-**✅ Valide:** já está configurado. O `gerar_evidencia.py` vai verificar que o arquivo existe e contém as regras corretas.
+1. Acesse **github.com/edymonte/pdv-api/issues** no navegador
+2. Crie uma nova issue com o título:
+   > `feat: endpoint GET /api/vendas/relatorio — contagem por status`
+3. No corpo da issue, descreva:
+   > Criar um endpoint que retorna a contagem de vendas agrupadas por `StatusVenda`. Seguir os padrões de arquitetura do repositório.
+4. No campo **Assignees**, atribua ao **Copilot** (aparece como opção ao clicar)
+5. Aguarde — o Copilot vai:
+   - Explorar o codebase
+   - Escrever o endpoint seguindo as instructions
+   - Rodar os testes
+   - Abrir um **draft PR** com o código, testes e scan de segurança
+6. Revise o PR aberto pelo Copilot no GitHub
+
+> 💡 **Por que importa:** o Coding Agent opera fora do VS Code — em pipelines, automações noturnas, PRs gerados por issue. O `AGENTS.md` é o contrato que garante que ele segue os mesmos padrões do time, mesmo sem supervisão humana direta.
+
+**✅ Valide:** o `gerar_evidencia.py` verifica que `AGENTS.md` existe e contém as regras de governança. O PR aberto pelo Copilot é a evidência em tempo real.
 
 ---
 
@@ -229,15 +244,16 @@ gh copilot explain "git rebase -i HEAD~3"
 
 Agora que todos os pilares estão configurados, execute os blocos do workshop usando os prompts que você copiou:
 
-| Bloco | Prompt | O que demonstra |
-|-------|--------|-----------------|
-| **Bloco 1** | `bloco1-sem-padrao` (na raiz) | Agente sem governança |
-| **Bloco 2** | `bloco2-com-instructions` | Instructions + Skills |
-| **Bloco 3** | `bloco3-mcp-catalogo` | MCP — consulta ao banco |
-| **Bloco 4** | `bloco4-adicionar-status` | Hook de autocorreção |
+| Bloco | Como executar | O que demonstra |
+|-------|---------------|------------------|
+| **Bloco 1** | prompt `bloco1-sem-padrao` (na raiz) | Agente sem governança |
+| **Bloco 2** | prompt `bloco2-com-instructions` | Instructions + Skills |
+| **Bloco 3** | prompt `bloco3-mcp-catalogo` | MCP — consulta ao banco |
+| **Bloco 4** | prompt `bloco4-adicionar-status` | Hook de autocorreção |
 | **Bloco 5** | `@qa-boa-vista` no chat | Custom Agent revisor |
-| **Bloco 6** | `bloco6-descricao-pr` | Descrição automática de PR |
-| **Bloco 7** | `gh copilot suggest` | CLI |
+| **Bloco 6** | prompt `bloco6-descricao-pr` | Knowledge Base — prompt compartilhado |
+| **Bloco 7** | Atribuir issue ao Copilot em github.com | Coding Agent — Issue → PR automático |
+| **Bloco 8** | `gh copilot suggest` / `copilot` CLI | CLI |
 
 > Os prompts aparecem automaticamente no Copilot Chat (`/` para listar).
 
@@ -258,19 +274,16 @@ O HTML abrirá automaticamente no navegador. Você deve ver **8/8 pilares config
 
 ---
 
-## Abra seu PR
+## Revise o PR aberto pelo Copilot
 
-```bash
-# Garante que seus commits estão na branch do time
-git push origin feature/dev    # ou qa / suporte
+No **Bloco 7**, o Copilot abriu um draft PR automaticamente a partir da issue que você criou.
 
-# Abre o PR via CLI
-gh pr create \
-  --base main \
-  --head feature/dev \
-  --title "feat: configuração completa de governança — Time Dev" \
-  --body "Evidência gerada em evidencias/"
-```
+1. Acesse **github.com/edymonte/pdv-api/pulls** no navegador
+2. Encontre o PR aberto pelo Copilot
+3. Leia o código gerado — verifique se ele seguiu as instructions do time
+4. Aprove e faça o merge (ou solicite ajustes deixando um comentário — o Copilot vai iterar)
+
+> O PR aberto pelo Copilot é a evidência viva do Pilar 7. Guarde o link.
 
 ---
 
@@ -280,7 +293,8 @@ gh pr create \
 - [ ] Fiz checkout da minha branch (`feature/dev|qa|suporte`)
 - [ ] Copiei e li cada arquivo de governança de `governanca/.github/`
 - [ ] Criei o banco SQLite do catálogo
-- [ ] Executei os Blocos 1 a 7
+- [ ] Executei os Blocos 1 a 8
+- [ ] O Copilot abriu o PR automaticamente no Bloco 7 (Coding Agent)
 - [ ] Rodei `gerar_evidencia.py` e obtive 8/8 pilares
 - [ ] Tirei o screenshot do HTML
-- [ ] Abri PR da minha branch → `main`
+- [ ] Revisei e aprovei o PR aberto pelo Copilot
