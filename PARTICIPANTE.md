@@ -173,22 +173,47 @@ cp governanca/.github/hooks/scripts/build-guard.sh .github/hooks/scripts/
 
 ### Pilar 6 — Knowledge Base 📚
 
-**O que é:** prompts reutilizáveis que encapsulam o conhecimento do time. São como "receitas" prontas — você executa com um clique em vez de descrever tudo do zero.
+**O que é:** documentação versionada no repositório que o Copilot consulta e **aplica diretamente no código**. Regras de negócio, ADRs, runbooks — o agente encontra a resposta na wiki antes de escrever uma linha.
+
+A diferença para as instructions: instructions são regras técnicas (sempre ativas). A Knowledge Base é o **domínio do negócio** — o agente a consulta quando precisa saber o que a empresa exige, não apenas como o código deve ser escrito.
+
+> 📎 Em produção, o GitHub Copilot Enterprise indexa documentação de vários repositórios, PDFs e wikis externas semanticamente. Aqui simulamos o mesmo conceito com `docs/wiki/` versionado no próprio repo.
 
 **Faça:**
 
 ```bash
+# A pasta docs/wiki/ já existe no repositório — explore os arquivos:
+cat docs/wiki/regras-de-negocio.md       # regras de cancelamento, desconto, estoque
+cat docs/wiki/regulatorio-anvisa.md      # LGPD, medicamentos controlados, NF-e
+cat docs/wiki/arquitetura-decisoes.md    # ADRs do projeto
+
+# Copia o prompt do Bloco 6
 mkdir -p .github/prompts
-cp governanca/.github/prompts/bloco2-com-instructions.prompt.md .github/prompts/
-cp governanca/.github/prompts/bloco3-mcp-catalogo.prompt.md .github/prompts/
-cp governanca/.github/prompts/bloco4-adicionar-status.prompt.md .github/prompts/
-cp governanca/.github/prompts/bloco4-correcao-manual.prompt.md .github/prompts/
-cp governanca/.github/prompts/bloco6-descricao-pr.prompt.md .github/prompts/
+cp governanca/.github/prompts/bloco6-knowledge-base.prompt.md .github/prompts/
 ```
 
-**Leia os arquivos:** note o campo `mode:` — `agent` para tarefas que modificam código, `chat` para tarefas narrativas (como descrição de PR).
+**Leia `docs/wiki/regras-de-negocio.md`:** preste atenção na seção "Descontos" — tem os limites exatos (15% geral, 5% para controlados) e as mensagens de erro que o sistema deve retornar.
 
-> 💡 **Por que importa:** sem prompts padronizados, cada dev descreve a tarefa de um jeito diferente e recebe resultados inconsistentes. Com prompts compartilhados, o time tem um vocabulário comum com o agente.
+**Teste antes de executar o prompt:**
+
+No Copilot Chat (modo chat normal), pergunte:
+> `@workspace Qual é o limite de desconto permitido sem aprovação gerencial?`
+
+O Copilot vai encontrar a resposta em `docs/wiki/regras-de-negocio.md` sem você precisar explicar. **Esse é o conceito de Knowledge Base** — a documentação se torna contexto automático.
+
+**Execute o prompt do Bloco 6:**
+
+Abra `bloco6-knowledge-base.prompt.md` no VS Code e execute (`/` para listar prompts).
+
+O agente vai:
+1. Ler `docs/wiki/regras-de-negocio.md` para encontrar os limites exatos
+2. Ler `docs/wiki/arquitetura-decisoes.md` para seguir o padrão de testes
+3. Implementar a validação com os valores **da documentação** — não inventados
+4. Gerar os testes seguindo o padrão ADR-005
+
+> 💡 **Por que importa:** um dev novo nunca precisa perguntar "qual é a regra de desconto?" — ele escreve o código e o Copilot aplica a regra correta da wiki automaticamente. Regra mudou? Atualiza o Markdown e o agente passa a usar a nova regra.
+
+**✅ Valide:** o `gerar_evidencia.py` verifica que `docs/wiki/regras-de-negocio.md`, `regulatorio-anvisa.md` e `bloco6-knowledge-base.prompt.md` existem.
 
 ---
 
