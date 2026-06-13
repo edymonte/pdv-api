@@ -361,38 +361,54 @@ def gerar_html(nome: str, turma: str, pilares_resultado: list[dict],
 
     status_label = "GOVERNANÇA COMPLETA" if aprovado_geral else "GOVERNANÇA INCOMPLETA"
     status_cls = "aprovado" if aprovado_geral else "pendente"
-    status_icon = "✓" if aprovado_geral else "✗"
     pct_color = "#2da44e" if aprovado_geral else "#f59e0b"
 
-    cards_html = ""
+    # ── Grid compacto dos 8 pilares (para screenshot) ──────────────────────
+    grid_html = ""
     for p in pilares_resultado:
         ok = p["aprovado"]
-        card_cls = "pilar-ok" if ok else "pilar-fail"
-        badge_cls = "b-ok" if ok else "b-fail"
-        badge_label = "Configurado" if ok else "Incompleto"
-        checks_html = ""
+        n_ok = sum(1 for r in p["resultados"] if r["passou"])
+        n_total = len(p["resultados"])
+        cell_cls = "cell-ok" if ok else "cell-fail"
+        tick = "✓" if ok else "✗"
+        tick_cls = "tick-ok" if ok else "tick-fail"
+        grid_html += (
+            f'<div class="pcell {cell_cls}">'
+            f'  <div class="pcell-top">'
+            f'    <span class="picone">{p["icone"]}</span>'
+            f'    <span class="{tick_cls}">{tick}</span>'
+            f'  </div>'
+            f'  <div class="pcell-label">{p["label"]}</div>'
+            f'  <div class="pcell-checks">{n_ok}/{n_total} checks</div>'
+            f'</div>'
+        )
+
+    # ── Detalhes expansíveis (abaixo da área de screenshot) ────────────────
+    details_html = ""
+    for p in pilares_resultado:
+        ok = p["aprovado"]
+        det_cls = "det-ok" if ok else "det-fail"
+        rows = ""
         for r in p["resultados"]:
             ci = "✔" if r["passou"] else "✘"
-            ci_cls = "ci-ok" if r["passou"] else "ci-fail"
-            det = f' <span class="check-det">— {r["detalhe"]}</span>' if not r["passou"] else ""
-            checks_html += (
-                f'<div class="check-row">'
+            ci_cls = "dci-ok" if r["passou"] else "dci-fail"
+            det = f' <span class="dci-det">→ {r["detalhe"]}</span>' if not r["passou"] else ""
+            rows += (
+                f'<div class="dcheck">'
                 f'<span class="{ci_cls}">{ci}</span>'
-                f'<span class="check-desc">{r["desc"]}{det}</span>'
+                f'<span>{r["desc"]}{det}</span>'
                 f'</div>'
             )
-        cards_html += f"""
-        <div class="pilar-card {card_cls}">
-          <div class="pilar-top">
-            <span class="pilar-icone">{p["icone"]}</span>
-            <div class="pilar-info">
-              <div class="pilar-label">{p["label"]}</div>
-              <div class="pilar-desc">{p["descricao"]}</div>
-            </div>
-            <span class="badge {badge_cls}">{badge_label}</span>
-          </div>
-          <div class="checks">{checks_html}</div>
-        </div>"""
+        details_html += f"""
+      <details class="det-block {det_cls}">
+        <summary>
+          <span class="det-icone">{p["icone"]}</span>
+          <strong>{p["label"]}</strong>
+          <span class="det-sub">{p["descricao"]}</span>
+          <span class="det-badge {'db-ok' if ok else 'db-fail'}">{'Configurado' if ok else 'Incompleto'}</span>
+        </summary>
+        <div class="det-rows">{rows}</div>
+      </details>"""
 
     meta_json = json.dumps({
         "nome": nome, "turma": turma, "aprovado": aprovado_geral,
@@ -408,112 +424,162 @@ def gerar_html(nome: str, turma: str, pilares_resultado: list[dict],
   <script id="evidencia-meta" type="application/json">{meta_json}</script>
   <style>
     *{{box-sizing:border-box;margin:0;padding:0}}
-    body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-          background:#eef2f7;padding:2rem 1rem}}
-    .page{{max-width:860px;margin:0 auto}}
-    .hd{{background:linear-gradient(135deg,#0d1117 0%,#161b22 65%,#1a2332 100%);
-         color:#fff;border-radius:16px 16px 0 0;padding:2rem 2.5rem 1.6rem;
-         position:relative;overflow:hidden}}
-    .hd::after{{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;
-                border-radius:50%;background:rgba(88,166,255,.06)}}
-    .hd-top{{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}}
-    .brand{{font-size:.68rem;font-weight:700;letter-spacing:.18em;
+    body{{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+          background:#f0f2f5;padding:1.5rem 1rem}}
+
+    /* ── CARD SCREENSHOT (tudo acima do fold) ─────────────────────── */
+    .card{{width:820px;margin:0 auto;border-radius:14px;overflow:hidden;
+           box-shadow:0 4px 24px rgba(0,0,0,.13)}}
+
+    /* cabeçalho */
+    .hd{{background:linear-gradient(135deg,#0d1117 0%,#161b22 55%,#1e2d3d 100%);
+         color:#fff;padding:1.4rem 2rem 1.2rem;position:relative;overflow:hidden}}
+    .hd::before{{content:"";position:absolute;right:-50px;top:-50px;
+                 width:200px;height:200px;border-radius:50%;
+                 background:radial-gradient(circle,rgba(88,166,255,.12) 0%,transparent 70%)}}
+    .hd-row1{{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}}
+    .brand{{font-size:.65rem;font-weight:700;letter-spacing:.16em;
             text-transform:uppercase;color:#58a6ff}}
-    .fase-badge{{font-size:.65rem;border:1px solid rgba(88,166,255,.4);
-                 color:#58a6ff;padding:.25rem .9rem;border-radius:100px;
-                 letter-spacing:.09em;text-transform:uppercase}}
-    .hd-pretitulo{{font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:.3rem}}
-    .hd-nome{{font-size:2rem;font-weight:900;letter-spacing:-.02em;margin-bottom:.25rem}}
-    .hd-sub{{font-size:.85rem;color:rgba(255,255,255,.45)}}
-    .hd-sub strong{{color:#fff}}
-    .meta-strip{{display:flex;gap:1.5rem;margin-top:1.2rem;flex-wrap:wrap}}
-    .meta-item{{font-size:.72rem;color:rgba(255,255,255,.35)}}
-    .meta-item strong{{color:rgba(255,255,255,.65);font-weight:600}}
-    .pillars-tagline{{margin-top:1rem;font-size:.73rem;color:rgba(88,166,255,.7);
-                      letter-spacing:.04em}}
-    .status-bar{{padding:1.1rem 2.5rem;display:flex;align-items:center;gap:1rem}}
-    .status-bar.aprovado{{background:#e6ffed;border-bottom:3px solid #2da44e}}
-    .status-bar.pendente{{background:#fff8e1;border-bottom:3px solid #f59e0b}}
-    .s-icon{{width:42px;height:42px;border-radius:50%;display:flex;
-             align-items:center;justify-content:center;font-size:1.3rem;
-             font-weight:800;flex-shrink:0}}
-    .aprovado .s-icon{{background:#2da44e;color:#fff}}
-    .pendente .s-icon{{background:#f59e0b;color:#fff}}
-    .s-texts{{flex:1}}
-    .s-label{{font-size:1rem;font-weight:800}}
-    .aprovado .s-label{{color:#1a7f37}}
-    .pendente .s-label{{color:#b45309}}
-    .s-sub{{font-size:.78rem;margin-top:.15rem}}
-    .aprovado .s-sub{{color:#2da44e}}
-    .pendente .s-sub{{color:#b45309}}
-    .s-right{{text-align:right}}
-    .s-pct{{font-size:1.8rem;font-weight:900;color:{pct_color}}}
-    .s-codigo{{font-family:monospace;font-size:.7rem;color:#aaa;margin-top:.1rem}}
-    .body{{background:#fff;padding:2rem 2.5rem;border-radius:0 0 16px 16px}}
-    .section-title{{font-size:.7rem;font-weight:700;letter-spacing:.12em;
-                    text-transform:uppercase;color:#57606a;margin-bottom:1.2rem;
-                    display:flex;align-items:center;gap:.6rem}}
-    .section-title::after{{content:"";flex:1;height:1px;background:#e8e8e8}}
-    .pilares-grid{{display:grid;gap:.8rem}}
-    .pilar-card{{border:1px solid #e8e8e8;border-radius:10px;padding:1rem 1.2rem}}
-    .pilar-ok{{border-left:4px solid #2da44e}}
-    .pilar-fail{{border-left:4px solid #cf222e}}
-    .pilar-top{{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:.7rem}}
-    .pilar-icone{{font-size:1.25rem;flex-shrink:0;margin-top:.1rem}}
-    .pilar-info{{flex:1;min-width:0}}
-    .pilar-label{{font-weight:700;font-size:.95rem;color:#24292f;margin-bottom:.2rem}}
-    .pilar-desc{{font-size:.77rem;color:#57606a;line-height:1.4}}
-    .badge{{font-size:.7rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;
-            white-space:nowrap;flex-shrink:0}}
-    .b-ok{{background:#e6ffed;color:#1a7f37}}
-    .b-fail{{background:#ffebe9;color:#cf222e}}
-    .checks{{display:flex;flex-direction:column;gap:.32rem;
-             padding-top:.65rem;border-top:1px solid #f0f0f0}}
-    .check-row{{display:flex;align-items:flex-start;gap:.55rem;font-size:.8rem;color:#444}}
-    .ci-ok{{color:#2da44e;flex-shrink:0;margin-top:.05rem;font-weight:700}}
-    .ci-fail{{color:#cf222e;flex-shrink:0;margin-top:.05rem;font-weight:700}}
-    .check-desc{{line-height:1.4}}
-    .check-det{{color:#cf222e;font-size:.75rem}}
-    .footer{{text-align:center;font-size:.72rem;color:#aaa;
-             margin-top:1.1rem;padding:.4rem 0}}
+    .fase-tag{{font-size:.62rem;border:1px solid rgba(88,166,255,.35);color:#58a6ff;
+               padding:.2rem .75rem;border-radius:100px;letter-spacing:.08em;text-transform:uppercase}}
+    .hd-row2{{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}}
+    .hd-left{{flex:1;min-width:0}}
+    .hd-pretitulo{{font-size:.72rem;color:rgba(255,255,255,.38);margin-bottom:.25rem}}
+    .hd-nome{{font-size:1.7rem;font-weight:900;letter-spacing:-.025em;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+    .hd-meta{{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.9rem}}
+    .hd-meta span{{font-size:.7rem;color:rgba(255,255,255,.38)}}
+    .hd-meta strong{{color:rgba(255,255,255,.7);font-weight:600}}
+    .hd-right{{text-align:right;flex-shrink:0}}
+    .pct-big{{font-size:3rem;font-weight:900;line-height:1;color:{pct_color}}}
+    .pct-label{{font-size:.65rem;color:rgba(255,255,255,.35);margin-top:.15rem}}
+
+    /* faixa de status */
+    .sbar{{display:flex;align-items:center;gap:.75rem;padding:.8rem 2rem}}
+    .sbar.aprovado{{background:#e6ffed;border-bottom:2px solid #2da44e}}
+    .sbar.pendente{{background:#fff8e1;border-bottom:2px solid #f59e0b}}
+    .sbar-dot{{width:10px;height:10px;border-radius:50%;flex-shrink:0}}
+    .aprovado .sbar-dot{{background:#2da44e}}
+    .pendente .sbar-dot{{background:#f59e0b}}
+    .sbar-label{{font-size:.82rem;font-weight:800}}
+    .aprovado .sbar-label{{color:#1a7f37}}
+    .pendente .sbar-label{{color:#b45309}}
+    .sbar-sep{{color:#ccc;font-size:.8rem}}
+    .sbar-sub{{font-size:.78rem;color:#666}}
+    .sbar-codigo{{margin-left:auto;font-family:monospace;font-size:.68rem;
+                  color:#aaa;white-space:nowrap}}
+
+    /* grid 4×2 dos pilares */
+    .pgrid{{background:#fff;padding:1.1rem 2rem 1.3rem;
+            display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}}
+    .pcell{{border:1px solid #e8e8e8;border-radius:9px;padding:.7rem .8rem;
+            display:flex;flex-direction:column;gap:.25rem}}
+    .cell-ok{{border-top:3px solid #2da44e;background:#fafffe}}
+    .cell-fail{{border-top:3px solid #cf222e;background:#fffafa}}
+    .pcell-top{{display:flex;align-items:center;justify-content:space-between}}
+    .picone{{font-size:1.1rem}}
+    .tick-ok{{font-size:1rem;font-weight:900;color:#2da44e}}
+    .tick-fail{{font-size:1rem;font-weight:900;color:#cf222e}}
+    .pcell-label{{font-size:.82rem;font-weight:700;color:#24292f}}
+    .pcell-checks{{font-size:.7rem;color:#888}}
+
+    /* rodapé do card */
+    .card-footer{{background:#f6f8fa;padding:.55rem 2rem;border-top:1px solid #e8e8e8;
+                  display:flex;align-items:center;justify-content:space-between}}
+    .cf-left{{font-size:.68rem;color:#aaa}}
+    .cf-right{{font-size:.68rem;color:#aaa;font-style:italic}}
+
+    /* ── DETALHES (abaixo do fold — não aparece no print) ─────────── */
+    .details-section{{width:820px;margin:1.5rem auto 0}}
+    .details-title{{font-size:.7rem;font-weight:700;letter-spacing:.1em;
+                    text-transform:uppercase;color:#888;margin-bottom:.8rem;
+                    padding-left:.2rem}}
+    .det-block{{border:1px solid #e8e8e8;border-radius:9px;margin-bottom:.5rem;
+                overflow:hidden}}
+    .det-ok summary{{background:#f6fffe}}
+    .det-fail summary{{background:#fff5f5}}
+    .det-block summary{{padding:.7rem 1rem;cursor:pointer;display:flex;
+                        align-items:center;gap:.6rem;list-style:none;
+                        font-size:.83rem}}
+    .det-block summary::-webkit-details-marker{{display:none}}
+    .det-block summary::before{{content:"▶";font-size:.6rem;color:#aaa;
+                                transition:transform .15s;flex-shrink:0}}
+    .det-block[open] summary::before{{transform:rotate(90deg)}}
+    .det-icone{{font-size:1rem}}
+    .det-sub{{flex:1;font-size:.75rem;color:#888;min-width:0;
+              overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+    .det-badge{{font-size:.65rem;font-weight:700;padding:.15rem .6rem;
+                border-radius:100px;flex-shrink:0}}
+    .db-ok{{background:#e6ffed;color:#1a7f37}}
+    .db-fail{{background:#ffebe9;color:#cf222e}}
+    .det-rows{{padding:.5rem 1rem .8rem 2.5rem;display:flex;flex-direction:column;gap:.3rem;
+               border-top:1px solid #f0f0f0}}
+    .dcheck{{display:flex;gap:.5rem;font-size:.78rem;color:#444;line-height:1.4}}
+    .dci-ok{{color:#2da44e;font-weight:700;flex-shrink:0}}
+    .dci-fail{{color:#cf222e;font-weight:700;flex-shrink:0}}
+    .dci-det{{color:#cf222e;font-size:.73rem}}
+
+    @media print{{
+      body{{background:#fff;padding:0}}
+      .card{{box-shadow:none;width:100%}}
+      .details-section{{display:none}}
+    }}
   </style>
 </head>
 <body>
-<div class="page">
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     CARD — tire o screenshot desta área (acima da linha de detalhes)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="card">
   <div class="hd">
-    <div class="hd-top">
+    <div class="hd-row1">
       <div class="brand">Farmácia Boa Vista · GitHub Copilot Workshop</div>
-      <div class="fase-badge">Fase 2 — Avançado</div>
+      <div class="fase-tag">Fase 2 — Avançado</div>
     </div>
-    <div class="hd-pretitulo">Evidência de Conclusão — Platform Extensibility</div>
-    <div class="hd-nome">{nome}</div>
-    <div class="hd-sub">Time: <strong>{turma.capitalize()}</strong> &nbsp;·&nbsp; Branch: <strong>{branch}</strong></div>
-    <div class="meta-strip">
-      <div class="meta-item">Gerado em: <strong>{ts_display}</strong></div>
-      <div class="meta-item">Último commit: <strong>{commit}</strong></div>
-    </div>
-    <div class="pillars-tagline">Instructions · Skills · Agents · MCP · Hooks · Knowledge Base · Coding Agent · CLI</div>
-  </div>
-
-  <div class="status-bar {status_cls}">
-    <div class="s-icon">{status_icon}</div>
-    <div class="s-texts">
-      <div class="s-label">{status_label}</div>
-      <div class="s-sub">{pilares_ok} de {total_pilares} pilares configurados &nbsp;·&nbsp; {checks_ok} de {total_checks} verificações aprovadas</div>
-    </div>
-    <div class="s-right">
-      <div class="s-pct">{pct}%</div>
-      <div class="s-codigo">{codigo}</div>
+    <div class="hd-row2">
+      <div class="hd-left">
+        <div class="hd-pretitulo">Evidência de Conclusão — Platform Extensibility</div>
+        <div class="hd-nome">{nome}</div>
+        <div class="hd-meta">
+          <span>Time: <strong>{turma.capitalize()}</strong></span>
+          <span>Branch: <strong>{branch}</strong></span>
+          <span>Gerado em: <strong>{ts_display}</strong></span>
+          <span>Commit: <strong>{commit}</strong></span>
+        </div>
+      </div>
+      <div class="hd-right">
+        <div class="pct-big">{pct}%</div>
+        <div class="pct-label">{checks_ok}/{total_checks} checks</div>
+      </div>
     </div>
   </div>
 
-  <div class="body">
-    <div class="section-title">Validação dos 8 Pilares</div>
-    <div class="pilares-grid">{cards_html}</div>
+  <div class="sbar {status_cls}">
+    <div class="sbar-dot"></div>
+    <div class="sbar-label">{status_label}</div>
+    <div class="sbar-sep">·</div>
+    <div class="sbar-sub">{pilares_ok} de {total_pilares} pilares configurados</div>
+    <div class="sbar-codigo">{codigo}</div>
   </div>
 
-  <div class="footer">PDV API — Farmácia Boa Vista &nbsp;·&nbsp; GitHub Copilot Workshop Fase 2 &nbsp;·&nbsp; {codigo}</div>
+  <div class="pgrid">{grid_html}</div>
+
+  <div class="card-footer">
+    <span class="cf-left">PDV API — Farmácia Boa Vista · GitHub Copilot Workshop Fase 2</span>
+    <span class="cf-right">Clique nos pilares abaixo para ver detalhes</span>
+  </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     DETALHES — abaixo do fold, não precisa entrar no screenshot
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="details-section">
+  <div class="details-title">Detalhes das verificações</div>
+  {details_html}
+</div>
+
+<script id="evidencia-meta" type="application/json">{meta_json}</script>
 </body>
 </html>"""
 
