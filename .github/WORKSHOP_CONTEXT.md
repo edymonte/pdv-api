@@ -29,13 +29,6 @@ Volta para o estado sem governança, recria o banco SQLite e verifica os testes.
 
 ---
 
-**Posicionamento vs. Kiro:** *"O Kiro mostra um agente trabalhando sozinho
-numa caixa fechada. O Copilot faz o mesmo — dentro do GitHub, com
-instructions, skills, MCP, hooks, agentes especialistas e revisão
-automática, tudo rastreável, versionado e revisável por humanos."*
-
----
-
 ## Primitivas ativas (após ativar-governanca)
 
 ### Instructions — sempre no contexto
@@ -76,7 +69,7 @@ automática, tudo rastreável, versionado e revisável por humanos."*
 
 | Bloco | Conteúdo | Prompt | Tempo |
 |---|---|---|---|
-| 0 | Abertura — comparação com Kiro | — | 10min |
+| 0 | Abertura — contexto e objetivo | — | 10min |
 | 1 | Agente sem regras | `.github/prompts/bloco1-sem-padrao.prompt.md` | 20min |
 | 2 | Com instructions + skill | `.github/prompts/bloco2-com-instructions.prompt.md` | 25min |
 | 3 | MCP catálogo de produtos | `.github/prompts/bloco3-mcp-catalogo.prompt.md` | 15min |
