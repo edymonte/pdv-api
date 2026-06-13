@@ -22,11 +22,20 @@ Usado como cenário do **GitHub Copilot Workshop — "Agente Autônomo"**.
 ### Iniciar
 
 ```bash
-git clone https://github.com/bvista-dev/pdv-api.git
+# 1. Clone o repositório
+git clone https://github.com/edymonte/pdv-api.git
 cd pdv-api
-dotnet restore && dotnet build && dotnet test
-sqlite3 db/catalogo-produtos.db < db/setup-catalogo.sql
+
+# 2. Verifique e prepare o ambiente (instala dependências faltantes automaticamente)
+# Windows:
+setup.bat
+
+# Linux / Mac:
+bash setup.sh
 ```
+
+O script `setup.bat` / `setup.sh` verifica Python, .NET 8 SDK, Node.js, GitHub CLI e cria o banco SQLite.
+Se algum pré-requisito estiver faltando, ele oferece instalar automaticamente.
 
 Consulte [setup/SETUP.md](setup/SETUP.md) para o checklist completo.
 
