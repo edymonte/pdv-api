@@ -67,7 +67,7 @@ Volta para o estado sem governança, recria o banco SQLite e verifica os testes.
 
 ## Roteiro dos Blocos (referência rápida)
 
-| Bloco | Conteúdo | Prompt | Tempo |
+| Bloco | Conteúdo | Como executar | Tempo |
 |---|---|---|---|
 | 0 | Abertura — contexto e objetivo | — | 10min |
 | 1 | Agente sem regras | `.github/prompts/bloco1-sem-padrao.prompt.md` | 20min |
@@ -75,9 +75,9 @@ Volta para o estado sem governança, recria o banco SQLite e verifica os testes.
 | 3 | MCP catálogo de produtos | `.github/prompts/bloco3-mcp-catalogo.prompt.md` | 15min |
 | 4 ⭐ | Autocorreção via hook | `.github/prompts/bloco4-adicionar-status.prompt.md` | 30min |
 | 5 | `@qa-boa-vista` revisa | prompt inline: `@qa-boa-vista revise as alterações feitas até agora` | 15min |
-| 6 | PR + Code Review | `.github/prompts/bloco6-descricao-pr.prompt.md` | 15min |
-| 7 | Copilot CLI | `gh copilot suggest "verificar logs do pdv-api nas últimas 2h"` | 10min |
-| 8 | Encerramento — antes x depois | Comparar `demo/sem-padrao` vs PR final | 10min |
+| 6 | Knowledge Base — prompt compartilhado | `.github/prompts/bloco6-descricao-pr.prompt.md` (gera descrição do PR) | 10min |
+| 7 ⭐ | Coding Agent — Issue → PR no GitHub.com | Atribuir issue ao Copilot em github.com/edymonte/pdv-api/issues | 15min |
+| 8 | CLI + Encerramento | `gh copilot suggest` / `copilot` CLI · Comparar `demo/sem-padrao` vs PR final | 15min |
 
 ---
 
