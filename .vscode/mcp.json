@@ -8,6 +8,14 @@
         "${workspaceFolder}/db/catalogo-produtos.db"
       ],
       "description": "Catálogo de produtos da Farmácia Boa Vista (SQLite). Usado no Bloco 3 para validar produtos antes de devolver estoque."
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "description": "Busca conteúdo de URLs externas em tempo real. Usado no Bloco 3 (extensão) para consultar documentação técnica e regulatórios externos durante a geração de código."
     }
   }
 }
