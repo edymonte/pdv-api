@@ -1,5 +1,5 @@
 ---
-applyTo: "src/**/Validators/*.cs"
+applyTo: "src/**/Validators/*.cs,src/**/Services/*.cs"
 ---
 
 # Padrões de Validação — pdv-api

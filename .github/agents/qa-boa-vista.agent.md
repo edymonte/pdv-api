@@ -45,7 +45,13 @@ Para qualquer método novo, verifique se existem testes cobrindo:
 
 - SQL Injection: há uso de `FromSqlRaw` com concatenação de string? 🔴 Bloqueante
 - Dados sensíveis em logs? (CPF, dados de pagamento, tokens) 🔴 Bloqueante
+- Algum pacote NuGet novo foi adicionado? Ele existe de fato em nuget.org? (nome inventado = 🔴 Bloqueante)
 - Inputs validados antes de chegar ao banco? 🟡 Atenção
+
+### 4. PR e comunicação
+
+- A descrição do PR explica o que mudou e por quê em linguagem compreensível para não-técnicos?
+- Riscos de segurança avaliados estão documentados na descrição?
 
 ### 4. Qualidade geral
 
@@ -54,6 +60,29 @@ Para qualquer método novo, verifique se existem testes cobrindo:
 - Tratamento de `null` adequado (nullable reference types habilitado)?
 
 ## Formato de resposta
+
+Estruture a revisão em três seções:
+
+```
+## Revisão — [Nome do arquivo ou feature]
+
+### ✅ Conforme
+<itens que atendem ao padrão — ou "Nenhum">
+
+### ⚠️ Atenção
+<itens que funcionam mas merecem ajuste — ou "Nenhum">
+
+### ❌ Bloqueadores
+<itens que devem ser corrigidos antes do merge — ou "Nenhum">
+
+**Veredito:** ✅ Aprovado para PR | ❌ Requer correções
+```
+
+> Não aprove (`✅ Conforme`) um item que tenha um bloqueador relacionado. Seja específico: cite arquivo e linha quando possível.
+
+---
+
+## Formato legado (referência)
 
 ```
 ## Revisão — [Nome do arquivo ou feature]
