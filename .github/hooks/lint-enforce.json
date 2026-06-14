@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "description": "Lint enforce — garante padrões de código e testes antes de qualquer ação do agente QA",
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[bvista-qa] Lint Enforce ativo. Nomenclatura Should_X_When_Y e estrutura AAA são obrigatórios.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[bvista-qa] Lint Enforce ativo. Nomenclatura Should_X_When_Y e estrutura AAA são obrigatórios.\"}'"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "if [ -f 'PdvApi.sln' ]; then dotnet test --no-build --verbosity quiet 2>/dev/null && echo '{\"status\": \"tests_passed\"}' || echo '{\"warning\": \"[bvista-qa] Testes falhando! O agente deve corrigir antes de continuar.\"}'; fi",
+        "powershell": "if (Test-Path 'PdvApi.sln') { $result = dotnet test --no-build --verbosity quiet 2>&1; if ($LASTEXITCODE -eq 0) { Write-Output '{\"status\": \"tests_passed\"}' } else { Write-Output '{\"warning\": \"[bvista-qa] Testes falhando! O agente deve corrigir antes de continuar.\"}' } }"
+      }
+    ],
+    "onFileEdit": [
+      {
+        "type": "command",
+        "bash": "grep -rn 'public.*Task.*Test\\|public.*void.*Test' tests/ 2>/dev/null | grep -v 'Should_' && echo '{\"warning\": \"[bvista-qa] Teste sem nomenclatura Should_X_When_Y detectado!\"}' || true",
+        "powershell": "if (Select-String -Path 'tests/**/*.cs' -Pattern 'public.*(Task|void).*Test' -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Line -notmatch 'Should_' }) { Write-Output '{\"warning\": \"[bvista-qa] Teste sem nomenclatura Should_X_When_Y detectado!\"}' }"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[bvista-qa] Sessão encerrada. Verifique cobertura de testes e nomenclatura antes do PR.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[bvista-qa] Sessão encerrada. Verifique cobertura de testes e nomenclatura antes do PR.\"}'"
+      }
+    ]
+  }
+}
