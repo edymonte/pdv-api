@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using PdvApi.Data;
 using PdvApi.Models;
 using PdvApi.Services;
+using Xunit;
 
 namespace PdvApi.Tests.Services;
 
