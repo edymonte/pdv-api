@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "description": "Audit trail — registra ações do agente para rastreabilidade de incidentes em produção",
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[bvista-n2] Audit Trail ativo. Todas as ações do agente são rastreadas para compliance.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[bvista-n2] Audit Trail ativo. Todas as ações do agente são rastreadas para compliance.\"}'"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "mkdir -p evidencias && echo \"$(date -u '+%Y-%m-%dT%H:%M:%SZ') | AGENT_ACTION | $TOOL_NAME\" >> evidencias/audit-trail.log 2>/dev/null || true",
+        "powershell": "New-Item -ItemType Directory -Force -Path 'evidencias' | Out-Null; \"$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ') | AGENT_ACTION\" | Add-Content -Path 'evidencias/audit-trail.log' -ErrorAction SilentlyContinue"
+      }
+    ],
+    "onFileEdit": [
+      {
+        "type": "command",
+        "bash": "mkdir -p evidencias && echo \"$(date -u '+%Y-%m-%dT%H:%M:%SZ') | FILE_EDIT | $FILE_PATH\" >> evidencias/audit-trail.log 2>/dev/null || true",
+        "powershell": "New-Item -ItemType Directory -Force -Path 'evidencias' | Out-Null; \"$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ') | FILE_EDIT\" | Add-Content -Path 'evidencias/audit-trail.log' -ErrorAction SilentlyContinue"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "mkdir -p evidencias && echo \"$(date -u '+%Y-%m-%dT%H:%M:%SZ') | SESSION_END\" >> evidencias/audit-trail.log && echo '{\"message\": \"[bvista-n2] Sessão encerrada. Audit trail salvo em evidencias/audit-trail.log.\"}' || true",
+        "powershell": "New-Item -ItemType Directory -Force -Path 'evidencias' | Out-Null; \"$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ssZ') | SESSION_END\" | Add-Content -Path 'evidencias/audit-trail.log' -ErrorAction SilentlyContinue; Write-Output '{\"message\": \"[bvista-n2] Sessão encerrada. Audit trail salvo em evidencias/audit-trail.log.\"}'"
+      }
+    ]
+  }
+}
