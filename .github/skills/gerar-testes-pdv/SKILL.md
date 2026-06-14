@@ -15,6 +15,32 @@ Use `@workspace` + esta skill sempre que precisar:
 - Completar cobertura de testes existente
 - Revisar se um teste segue o padrão do projeto
 
+## Passo a passo
+
+1. **Identifique os cenários obrigatórios** para o caso de uso:
+   - Caminho feliz (sucesso)
+   - Erro de validação de regra de negócio
+   - Entidade não encontrada (quando o caso de uso busca algo por ID)
+   - Cenários extras específicos da regra (ex: status inválido para a operação)
+
+2. **Estruture o arquivo de teste**:
+   - Nome: `<Classe>Tests.cs`
+   - Localização: mesma subpasta da classe testada, dentro de `tests/`
+   - Um `[Fact]` por cenário, nomeado como `Should_<Resultado>_When_<Condicao>`
+
+3. **Para cada teste, siga o padrão AAA** com comentários separadores obrigatórios
+
+4. **Mocks**: use `Moq` para qualquer dependência externa. Nunca acesse banco real em testes unitários.
+
+5. **Exceções**: ao testar erro de validação ou regra de negócio, verifique:
+   - O tipo da exceção lançada
+   - A mensagem da exceção (deve corresponder à mensagem definida no Validator)
+
+6. **Revisão final**: confirme que os 3 cenários mínimos estão presentes antes de considerar concluído:
+   - [ ] Caminho feliz (sucesso)
+   - [ ] Erro de validação / regra de negócio
+   - [ ] Entidade não encontrada (quando aplicável)
+
 ## Padrão de nomenclatura
 
 ```

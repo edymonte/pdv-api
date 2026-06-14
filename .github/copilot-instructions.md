@@ -20,15 +20,18 @@
 - Controllers apenas delegam para o Service e retornam HTTP responses
 - Validações de entrada usam **FluentValidation** (Validators em `/Validators`)
 - Acesso a dados exclusivamente via **EF Core** — nunca `FromSqlRaw` com concatenação
+- Métodos assíncronos sempre com sufixo **`Async`** (ex: `CancelarVendaAsync`)
 
 ---
 
 ## Segurança (CRÍTICO)
 
-- **NUNCA** usar `FromSqlRaw` com interpolação de string — use parâmetros sempre
+- **NUNCA** usar `FromSqlRaw` com interpolação de string — use `FromSqlInterpolated` ou parâmetros nomeados
 - **NUNCA** expor detalhes de exceção interna no response HTTP
 - **NUNCA** logar dados sensíveis de clientes (CPF, endereço, dados de pagamento)
+- **NUNCA** inventar nomes de pacotes NuGet — sugerir apenas pacotes que existam oficialmente em nuget.org
 - Validar todos os inputs no Validator antes de chegar ao Service
+- Nunca confiar em IDs ou dados vindos do cliente sem validar existência e permissão
 
 ---
 
@@ -56,7 +59,8 @@ Use **FluentAssertions** para assertions mais legíveis.
 ## Commits e PRs
 
 - Commits seguem **Conventional Commits**: `feat:`, `fix:`, `test:`, `refactor:`, `docs:`
-- PRs devem incluir: o que foi alterado, por quê, e quais testes cobrem a mudança
+- A descrição do PR deve explicar o que foi alterado e por quê em linguagem que um revisor não-técnico (liderança) consiga entender o impacto
+- PRs devem listar riscos de segurança avaliados (ex: "validado contra SQL injection", "entrada de usuário validada")
 - Nunca dar merge sem testes passando (`dotnet test`)
 
 ---
