@@ -68,7 +68,7 @@ public class VendaServiceTests
     }
 
     [Fact]
-    public async Task Should_ReturnSalesCountByStatus_When_VendasExistemEmTodosOsStatus()
+    public async Task Should_ReturnDictionaryWithAllStatusCounts_When_VendasExistemEmTodosOsStatus()
     {
         // Arrange
         await using var context = CriarContexto();
