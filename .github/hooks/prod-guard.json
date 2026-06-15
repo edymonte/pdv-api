@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "description": "Guard de produção — bloqueia padrões inseguros antes de qualquer commit em main",
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[bvista-dev] Prod Guard ativo. FromSqlRaw com interpolação e exposição de exceptions são BLOQUEANTES.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[bvista-dev] Prod Guard ativo. FromSqlRaw com interpolação e exposição de exceptions são BLOQUEANTES.\"}'"
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "bash .github/hooks/scripts/build-guard.sh",
+        "powershell": "pwsh -File .github/hooks/scripts/build-guard.ps1"
+      }
+    ],
+    "onFileEdit": [
+      {
+        "type": "command",
+        "bash": "grep -rn 'FromSqlRaw.*\\$\\|FromSqlRaw.*string.Format\\|FromSqlRaw.*\\+' src/ 2>/dev/null && echo '{\"warning\": \"BLOQUEANTE: FromSqlRaw com interpolação detectado!\"}' || true",
+        "powershell": "if (Select-String -Path 'src/**/*.cs' -Pattern 'FromSqlRaw.*\\$|FromSqlRaw.*string\\.Format|FromSqlRaw.*\\+' -Recurse -ErrorAction SilentlyContinue) { Write-Output '{\"warning\": \"BLOQUEANTE: FromSqlRaw com interpolação detectado!\"}' }"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "echo '{\"message\": \"[bvista-dev] Sessão encerrada. Execute dotnet test e revise segurança antes do PR.\"}'",
+        "powershell": "Write-Output '{\"message\": \"[bvista-dev] Sessão encerrada. Execute dotnet test e revise segurança antes do PR.\"}'"
+      }
+    ]
+  }
+}
