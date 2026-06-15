@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evidência · Edilson Monteiro · Workshop Copilot Fase 2</title>
+  <script id="evidencia-meta" type="application/json">{"nome": "Edilson Monteiro", "turma": "dev", "aprovado": true, "codigo": "BV-62E2C48B", "timestamp": "20260614_191956", "branch": "main"}</script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+          background:#f0f2f5;padding:1.5rem 1rem}
+
+    /* ── CARD SCREENSHOT (tudo acima do fold) ─────────────────────── */
+    .card{width:820px;margin:0 auto;border-radius:14px;overflow:hidden;
+           box-shadow:0 4px 24px rgba(0,0,0,.13)}
+
+    /* cabeçalho */
+    .hd{background:linear-gradient(135deg,#0d1117 0%,#161b22 55%,#1e2d3d 100%);
+         color:#fff;padding:1.4rem 2rem 1.2rem;position:relative;overflow:hidden}
+    .hd::before{content:"";position:absolute;right:-50px;top:-50px;
+                 width:200px;height:200px;border-radius:50%;
+                 background:radial-gradient(circle,rgba(88,166,255,.12) 0%,transparent 70%)}
+    .hd-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+    .brand{font-size:.65rem;font-weight:700;letter-spacing:.16em;
+            text-transform:uppercase;color:#58a6ff}
+    .fase-tag{font-size:.62rem;border:1px solid rgba(88,166,255,.35);color:#58a6ff;
+               padding:.2rem .75rem;border-radius:100px;letter-spacing:.08em;text-transform:uppercase}
+    .hd-row2{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem}
+    .hd-left{flex:1;min-width:0}
+    .hd-pretitulo{font-size:.72rem;color:rgba(255,255,255,.38);margin-bottom:.25rem}
+    .hd-nome{font-size:1.7rem;font-weight:900;letter-spacing:-.025em;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hd-meta{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.9rem}
+    .hd-meta span{font-size:.7rem;color:rgba(255,255,255,.38)}
+    .hd-meta strong{color:rgba(255,255,255,.7);font-weight:600}
+    .hd-right{text-align:right;flex-shrink:0}
+    .pct-big{font-size:3rem;font-weight:900;line-height:1;color:#2da44e}
+    .pct-label{font-size:.65rem;color:rgba(255,255,255,.35);margin-top:.15rem}
+
+    /* faixa de status */
+    .sbar{display:flex;align-items:center;gap:.75rem;padding:.8rem 2rem}
+    .sbar.aprovado{background:#e6ffed;border-bottom:2px solid #2da44e}
+    .sbar.pendente{background:#fff8e1;border-bottom:2px solid #f59e0b}
+    .sbar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .aprovado .sbar-dot{background:#2da44e}
+    .pendente .sbar-dot{background:#f59e0b}
+    .sbar-label{font-size:.82rem;font-weight:800}
+    .aprovado .sbar-label{color:#1a7f37}
+    .pendente .sbar-label{color:#b45309}
+    .sbar-sep{color:#ccc;font-size:.8rem}
+    .sbar-sub{font-size:.78rem;color:#666}
+    .sbar-codigo{margin-left:auto;font-family:monospace;font-size:.68rem;
+                  color:#aaa;white-space:nowrap}
+
+    /* grid 4×2 dos pilares */
+    .pgrid{background:#fff;padding:1.1rem 2rem 1.3rem;
+            display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+    .pcell{border:1px solid #e8e8e8;border-radius:9px;padding:.7rem .8rem;
+            display:flex;flex-direction:column;gap:.25rem}
+    .cell-ok{border-top:3px solid #2da44e;background:#fafffe}
+    .cell-fail{border-top:3px solid #cf222e;background:#fffafa}
+    .pcell-top{display:flex;align-items:center;justify-content:space-between}
+    .picone{font-size:1.1rem}
+    .tick-ok{font-size:1rem;font-weight:900;color:#2da44e}
+    .tick-fail{font-size:1rem;font-weight:900;color:#cf222e}
+    .pcell-label{font-size:.82rem;font-weight:700;color:#24292f}
+    .pcell-checks{font-size:.7rem;color:#888}
+
+    /* rodapé do card */
+    .card-footer{background:#f6f8fa;padding:.55rem 2rem;border-top:1px solid #e8e8e8;
+                  display:flex;align-items:center;justify-content:space-between}
+    .cf-left{font-size:.68rem;color:#aaa}
+    .cf-right{font-size:.68rem;color:#aaa;font-style:italic}
+
+    /* ── DETALHES (abaixo do fold — não aparece no print) ─────────── */
+    .details-section{width:820px;margin:1.5rem auto 0}
+    .details-title{font-size:.7rem;font-weight:700;letter-spacing:.1em;
+                    text-transform:uppercase;color:#888;margin-bottom:.8rem;
+                    padding-left:.2rem}
+    .det-block{border:1px solid #e8e8e8;border-radius:9px;margin-bottom:.5rem;
+                overflow:hidden}
+    .det-ok summary{background:#f6fffe}
+    .det-fail summary{background:#fff5f5}
+    .det-block summary{padding:.7rem 1rem;cursor:pointer;display:flex;
+                        align-items:center;gap:.6rem;list-style:none;
+                        font-size:.83rem}
+    .det-block summary::-webkit-details-marker{display:none}
+    .det-block summary::before{content:"▶";font-size:.6rem;color:#aaa;
+                                transition:transform .15s;flex-shrink:0}
+    .det-block[open] summary::before{transform:rotate(90deg)}
+    .det-icone{font-size:1rem}
+    .det-sub{flex:1;font-size:.75rem;color:#888;min-width:0;
+              overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .det-badge{font-size:.65rem;font-weight:700;padding:.15rem .6rem;
+                border-radius:100px;flex-shrink:0}
+    .db-ok{background:#e6ffed;color:#1a7f37}
+    .db-fail{background:#ffebe9;color:#cf222e}
+    .det-rows{padding:.5rem 1rem .8rem 2.5rem;display:flex;flex-direction:column;gap:.3rem;
+               border-top:1px solid #f0f0f0}
+    .dcheck{display:flex;gap:.5rem;font-size:.78rem;color:#444;line-height:1.4}
+    .dci-ok{color:#2da44e;font-weight:700;flex-shrink:0}
+    .dci-fail{color:#cf222e;font-weight:700;flex-shrink:0}
+    .dci-det{color:#cf222e;font-size:.73rem}
+
+    @media print{
+      body{background:#fff;padding:0}
+      .card{box-shadow:none;width:100%}
+      .details-section{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     CARD — tire o screenshot desta área (acima da linha de detalhes)
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="hd">
+    <div class="hd-row1">
+      <div class="brand">Farmácia Boa Vista · GitHub Copilot Workshop</div>
+      <div class="fase-tag">Fase 2 — Avançado</div>
+    </div>
+    <div class="hd-row2">
+      <div class="hd-left">
+        <div class="hd-pretitulo">Evidência de Conclusão — Platform Extensibility</div>
+        <div class="hd-nome">Edilson Monteiro</div>
+        <div class="hd-meta">
+          <span>Time: <strong>Dev</strong></span>
+          <span>Branch: <strong>main</strong></span>
+          <span>Gerado em: <strong>14/06/2026 às 19:19:56</strong></span>
+          <span>Commit: <strong>359f5f7 â€” Merge pull request #2 from edymonte/feature/suporte</strong></span>
+        </div>
+      </div>
+      <div class="hd-right">
+        <div class="pct-big">100%</div>
+        <div class="pct-label">28/28 checks</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sbar aprovado">
+    <div class="sbar-dot"></div>
+    <div class="sbar-label">GOVERNANÇA COMPLETA</div>
+    <div class="sbar-sep">·</div>
+    <div class="sbar-sub">8 de 8 pilares configurados</div>
+    <div class="sbar-codigo">BV-62E2C48B</div>
+  </div>
+
+  <div class="pgrid"><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">📋</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Instructions</div>  <div class="pcell-checks">4/4 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">🧠</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Skills</div>  <div class="pcell-checks">3/3 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">🤖</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Agents</div>  <div class="pcell-checks">3/3 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">🔌</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">MCP</div>  <div class="pcell-checks">4/4 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">🪝</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Hooks</div>  <div class="pcell-checks">4/4 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">📚</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Knowledge Base</div>  <div class="pcell-checks">4/4 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">⚙️</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">Coding Agent</div>  <div class="pcell-checks">4/4 checks</div></div><div class="pcell cell-ok">  <div class="pcell-top">    <span class="picone">💻</span>    <span class="tick-ok">✓</span>  </div>  <div class="pcell-label">CLI</div>  <div class="pcell-checks">2/2 checks</div></div></div>
+
+  <div class="card-footer">
+    <span class="cf-left">PDV API — Farmácia Boa Vista · GitHub Copilot Workshop Fase 2</span>
+    <span class="cf-right">Clique nos pilares abaixo para ver detalhes</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     DETALHES — abaixo do fold, não precisa entrar no screenshot
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="details-section">
+  <div class="details-title">Detalhes das verificações</div>
+  
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">📋</span>
+          <strong>Instructions</strong>
+          <span class="det-sub">Regras permanentes do time injetadas em todo contexto do Copilot</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>copilot-instructions.md ativo no repositório</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Instructions específicas de testes configuradas</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Instructions específicas de validação configuradas</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Instructions contêm regras de arquitetura (Services/Controllers)</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">🧠</span>
+          <strong>Skills</strong>
+          <span class="det-sub">Conhecimento especializado injetado sob demanda no contexto</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>Skill gerar-testes-pdv presente</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Skill contém padrão de nomenclatura Should_X_When_Y</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Skill define cobertura mínima exigida</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">🤖</span>
+          <strong>Agents</strong>
+          <span class="det-sub">Agentes especialistas com identidade, escopo e ferramentas próprias</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>Custom Agent @qa-boa-vista configurado</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Agent define ferramentas (tools) ativas</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Agent contém critérios de revisão de segurança</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">🔌</span>
+          <strong>MCP</strong>
+          <span class="det-sub">Ferramentas externas conectadas ao Agent Mode via Model Context Protocol</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>mcp.json configurado no workspace</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Servidor MCP sqlite-catalogo registrado</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Banco de dados do catálogo de produtos criado</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Script de setup do banco presente</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">🪝</span>
+          <strong>Hooks</strong>
+          <span class="det-sub">Controle de ações do agente — único primitivo que pode bloquear e auditar</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>Hook build-guard.json configurado</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Hook usa evento postToolUse para detectar falhas</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Script do hook presente para Windows (PowerShell)</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Script do hook presente para Linux/Mac (bash)</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">📚</span>
+          <strong>Knowledge Base</strong>
+          <span class="det-sub">Wiki de documentação consultada pelo agente para implementar regras de negócio reais</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>Wiki de regras de negócio presente (docs/wiki/regras-de-negocio.md)</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Wiki contém regras de desconto consultáveis pelo agente</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Wiki regulatório ANVISA presente (docs/wiki/regulatorio-anvisa.md)</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Prompt Knowledge Base presente (bloco6-knowledge-base.prompt.md)</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">⚙️</span>
+          <strong>Coding Agent</strong>
+          <span class="det-sub">Agente autônomo que opera sobre o repositório com instruções estruturadas</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>AGENTS.md presente (instrui o Coding Agent)</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>AGENTS.md define regras de geração de código</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>CI workflow configurado (build + test automático)</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>Workflow CI executa dotnet test</span></div></div>
+      </details>
+      <details class="det-block det-ok">
+        <summary>
+          <span class="det-icone">💻</span>
+          <strong>CLI</strong>
+          <span class="det-sub">GitHub Copilot CLI para diagnóstico e suporte direto no terminal</span>
+          <span class="det-badge db-ok">Configurado</span>
+        </summary>
+        <div class="det-rows"><div class="dcheck"><span class="dci-ok">✔</span><span>GitHub CLI (gh) instalado</span></div><div class="dcheck"><span class="dci-ok">✔</span><span>gh copilot disponível (built-in ou extensão)</span></div></div>
+      </details>
+</div>
+
+<script id="evidencia-meta" type="application/json">{"nome": "Edilson Monteiro", "turma": "dev", "aprovado": true, "codigo": "BV-62E2C48B", "timestamp": "20260614_191956", "branch": "main"}</script>
+</body>
+</html>
