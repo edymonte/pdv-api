@@ -7,6 +7,6 @@ public enum StatusVenda
 {
     Pendente = 0,
     Concluida = 1,
-    Cancelada = 2
-    // ⚠️ BLOCO 4 — o agente vai adicionar "EmAnalise = 3" aqui durante a demo
+    Cancelada = 2,
+    EmAnalise = 3
 }

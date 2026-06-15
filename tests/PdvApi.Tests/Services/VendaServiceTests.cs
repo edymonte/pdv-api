@@ -67,6 +67,34 @@ public class VendaServiceTests
         context.Vendas.Count().Should().Be(1);
     }
 
+    [Fact]
+    public async Task Should_ReturnSalesCountByStatus_When_VendasExistemEmTodosOsStatus()
+    {
+        // Arrange
+        await using var context = CriarContexto();
+        context.Vendas.AddRange(
+            new Venda { ClienteId = "CLI-001", Status = StatusVenda.Pendente },
+            new Venda { ClienteId = "CLI-002", Status = StatusVenda.Concluida },
+            new Venda { ClienteId = "CLI-003", Status = StatusVenda.Concluida },
+            new Venda { ClienteId = "CLI-004", Status = StatusVenda.Cancelada },
+            new Venda { ClienteId = "CLI-005", Status = StatusVenda.EmAnalise });
+        await context.SaveChangesAsync();
+
+        var service = new VendaService(context, NullLogger<VendaService>.Instance);
+
+        // Act
+        var relatorio = await service.ObterRelatorioPorStatusAsync();
+
+        // Assert
+        relatorio.Should().BeEquivalentTo(new Dictionary<string, int>
+        {
+            ["Pendente"] = 1,
+            ["Concluida"] = 2,
+            ["Cancelada"] = 1,
+            ["EmAnalise"] = 1
+        });
+    }
+
     // ⚠️ WORKSHOP — testes de CancelarVendaAsync são gerados pelo agente no Bloco 2.
     // Padrão esperado de nomenclatura:
     //   Should_CancelarVenda_When_StatusConcluida

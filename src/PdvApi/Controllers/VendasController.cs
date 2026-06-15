@@ -25,6 +25,14 @@ public class VendasController : ControllerBase
         return Ok(vendas);
     }
 
+    /// <summary>GET /api/vendas/relatorio — retorna a contagem de vendas por status.</summary>
+    [HttpGet("relatorio")]
+    public async Task<IActionResult> ObterRelatorio()
+    {
+        var relatorio = await _vendaService.ObterRelatorioPorStatusAsync();
+        return Ok(relatorio);
+    }
+
     /// <summary>GET /api/vendas/{id} — retorna uma venda pelo ID.</summary>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> ObterPorId(int id)

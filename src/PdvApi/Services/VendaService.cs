@@ -29,6 +29,26 @@ public class VendaService : IVendaService
             .ToListAsync();
     }
 
+    public async Task<IDictionary<string, int>> ObterRelatorioPorStatusAsync()
+    {
+        var totaisPorStatus = await _context.Vendas
+            .AsNoTracking()
+            .GroupBy(v => v.Status)
+            .Select(group => new { Status = group.Key, Total = group.Count() })
+            .ToDictionaryAsync(group => group.Status, group => group.Total);
+
+        var relatorio = new Dictionary<string, int>();
+
+        foreach (var status in Enum.GetValues<StatusVenda>())
+        {
+            relatorio[status.ToString()] = totaisPorStatus.TryGetValue(status, out var total)
+                ? total
+                : 0;
+        }
+
+        return relatorio;
+    }
+
     public async Task<Venda> CriarVendaAsync(Venda venda)
     {
         _context.Vendas.Add(venda);
